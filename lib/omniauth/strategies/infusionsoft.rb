@@ -21,7 +21,7 @@ module OmniAuth
             uri = URI.parse(request.url.gsub(/\?.*$/,''))
             uri.path = ''
             uri.query = nil
-            #sometimes the url is actually showing http inside rails because the other layers (like nginx) have handled the ssl termination.
+            #infusionsoft requires https for callback urls
             uri.scheme = 'https'
             uri.to_s
         end
