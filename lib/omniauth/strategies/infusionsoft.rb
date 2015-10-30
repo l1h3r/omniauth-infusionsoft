@@ -11,6 +11,22 @@ module OmniAuth
         site:          'https://signin.infusionsoft.com'
       }
 
+      def full_host
+        case OmniAuth.config.full_host
+          when String
+            OmniAuth.config.full_host
+          when Proc
+            OmniAuth.config.full_host.call(env)
+          else
+            uri = URI.parse(request.url.gsub(/\?.*$/,''))
+            uri.path = ''
+            uri.query = nil
+            #infusionsoft requires https for callback urls
+            uri.scheme = 'https'
+            uri.to_s
+        end
+      end
+
     end
   end
 end
