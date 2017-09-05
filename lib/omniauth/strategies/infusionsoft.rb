@@ -22,7 +22,7 @@ module OmniAuth
             uri.path = ''
             uri.query = nil
             #infusionsoft requires https for callback urls
-            uri.scheme = 'https'
+            uri.scheme = 'https' unless request.url.include?('localhost')
             uri.to_s
         end
       end
