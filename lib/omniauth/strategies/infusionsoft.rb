@@ -23,8 +23,8 @@ module OmniAuth
             uri.path = ''
             uri.query = nil
             #infusionsoft requires https for callback urls
-            #force ssl for all hosts except: 127.x.x.x, fe80::1 and ::1
-            uri.scheme = 'https' unless Resolv.getaddress(uri.host) =~ /^(fe80::1|127|::1)/
+            #force ssl for all hosts except: 127.x.x.x, fe80:: and ::1
+            uri.scheme = 'https' unless Resolv.getaddress(uri.host) =~ /^(fe80::|127|::1)/
             uri.to_s
         end
       end
