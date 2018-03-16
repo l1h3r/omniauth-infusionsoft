@@ -8,7 +8,7 @@ Gem::Specification.new do |gem|
   gem.email         = ['devin.turner09@gmail.com']
   gem.summary       = 'An Infusionsoft OAuth2 strategy for OmniAuth'
   gem.homepage      = 'https://github.com/l1h3r/omniauth-infusionsoft'
-  gem.license       = 'GPL'
+  gem.license       = 'MIT'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r( ^bin/ )).map { |f| File.basename(f) }
