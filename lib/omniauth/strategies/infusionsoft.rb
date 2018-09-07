@@ -12,6 +12,20 @@ module OmniAuth
         site:          'https://signin.infusionsoft.com'
       }
 
+      uid{ raw_info['global_user_id'] }
+
+      info do
+        {
+            :email => raw_info['email'],
+        }
+      end
+
+      extra do
+        {
+            'raw_info' => raw_info
+        }
+      end
+
       def full_host
         case OmniAuth.config.full_host
           when String
@@ -32,6 +46,12 @@ module OmniAuth
       def callback_url
         full_host + script_name + callback_path
       end
+
+
+      def raw_info
+        @raw_info ||= access_token.get('https://api.infusionsoft.com/crm/rest/v1/oauth/connect/userinfo').parsed
+      end
+
     end
   end
 end
