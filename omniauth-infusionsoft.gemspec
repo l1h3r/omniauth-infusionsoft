@@ -8,7 +8,7 @@ Gem::Specification.new do |gem|
   gem.email         = ['devin.turner09@gmail.com']
   gem.summary       = 'An Infusionsoft OAuth2 strategy for OmniAuth'
   gem.homepage      = 'https://github.com/l1h3r/omniauth-infusionsoft'
-  gem.license       = 'GPL'
+  gem.license       = 'MIT'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r( ^bin/ )).map { |f| File.basename(f) }
@@ -18,7 +18,7 @@ Gem::Specification.new do |gem|
   gem.required_rubygems_version = Gem::Requirement.new('>= 1.3.6')
 
   gem.add_runtime_dependency 'nokogiri', '>= 1.6.5'
-  gem.add_runtime_dependency 'omniauth', '~> 1.0'
+  gem.add_runtime_dependency 'omniauth', '~> 2.0'
   gem.add_runtime_dependency 'omniauth-oauth2', '~> 1.1'
 
   gem.add_development_dependency 'bundler', '~> 1.5'

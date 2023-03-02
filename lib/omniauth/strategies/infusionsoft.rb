@@ -1,4 +1,5 @@
 require 'omniauth-oauth2'
+require 'resolv'
 require 'net/http'
 require 'net/https'
 require 'nokogiri'
@@ -24,8 +25,9 @@ module OmniAuth
             uri = URI.parse(request.url.gsub(/\?.*$/,''))
             uri.path = ''
             uri.query = nil
-            #infusionsoft requires https for callback urls. Support HTTP for localhost
-            uri.scheme = 'https' unless uri.host.match(/\Alocalhost\Z/i)
+            #infusionsoft requires https for callback urls
+            #force ssl for all hosts except: 127.x.x.x, fe80:: and ::1
+            uri.scheme = 'https' unless Resolv.getaddress(uri.host) =~ /^(fe80::|127|::1)/
             uri.to_s
         end
       end
