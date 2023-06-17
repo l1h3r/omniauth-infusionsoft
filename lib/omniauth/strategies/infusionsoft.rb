@@ -1,5 +1,8 @@
 require 'omniauth-oauth2'
 require 'resolv'
+require 'net/http'
+require 'net/https'
+require 'nokogiri'
 
 module OmniAuth
   module Strategies
@@ -11,20 +14,6 @@ module OmniAuth
         token_url:     'https://api.infusionsoft.com/token',
         site:          'https://signin.infusionsoft.com'
       }
-
-      uid{ raw_info['global_user_id'] }
-
-      info do
-        {
-            :email => raw_info['email'],
-        }
-      end
-
-      extra do
-        {
-            'raw_info' => raw_info
-        }
-      end
 
       def full_host
         case OmniAuth.config.full_host
@@ -43,15 +32,45 @@ module OmniAuth
         end
       end
 
-      def callback_url
-        full_host + script_name + callback_path
+      uid { "#{user_info['globalUserId']}-#{user_info['appAlias']}" }
+
+      info do
+        {
+          name: user_info['displayName'],
+          email: user_info['casUsername']
+        }
       end
 
-
-      def raw_info
-        @raw_info ||= access_token.get('https://api.infusionsoft.com/crm/rest/v1/oauth/connect/userinfo').parsed
+      def user_info
+        @user_info ||= get_user_info(access_token.token)
       end
 
+      def get_user_info(token)
+        uri = URI.parse("https://api.infusionsoft.com/crm/xmlrpc/v1?access_token=#{token}")
+        https = Net::HTTP.new(uri.host, uri.port)
+        https.use_ssl = true
+        req = Net::HTTP::Post.new(uri.request_uri, {'Content-Type' =>'application/xml'})
+        req.body = %q{<?xml version='1.0' encoding='UTF-8'?>
+<methodCall>
+  <methodName>DataService.getUserInfo</methodName>
+  <params></params>
+</methodCall>}
+
+        res = https.request(req)
+        return {} unless res.code == "200"
+
+        reply = Nokogiri::XML(res.body)
+        return {} unless reply.xpath('//fault').size == 0
+
+        data_hash = {}
+        reply.xpath('//member').each do |member|
+          children = member.children.select(&:element?)
+          name = children[0].text()
+          value = children[1].text()
+          data_hash[name] = value
+        end
+        data_hash
+      end
     end
   end
 end
